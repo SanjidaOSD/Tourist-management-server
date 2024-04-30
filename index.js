@@ -30,8 +30,24 @@ async function run() {
     await client.connect();
 
 const placeCollection = client.db('placeDB').collection('place');
-const listCollection = client.db('listDB').collection('myAddList');
+const countryCollection = client.db('placeDB').collection('CountryDB')
 
+app.get('/country',async(req, res) =>{
+  const cursor = countryCollection.find();
+  const result = await cursor.toArray();
+  console.log(result)
+
+  res.send(result);
+})
+
+app.get('/country/:country', async(req , res) =>{
+  const {country} = req.params
+  const query = {country: country}
+  console.log(query)
+  const result = await placeCollection.find(query).toArray();
+  console.log(result)
+  res.send(result)
+  })
 
 app.get('/place',async(req, res) => {
   const cursor = placeCollection.find();
@@ -43,21 +59,24 @@ app.get('/place/:id', async(req , res) =>{
 const {id} = req.params
 const query = {_id: new ObjectId(id)}
 const result = await placeCollection.findOne(query);
-console.log(result)
 res.send(result)
 })
 
 app.get('/myList/:email', async(req , res) =>{
   const {email} = req.params
-  const query = {email: new ObjectId(email)}
+  const query = {email: email}
+  console.log(query)
   const result = await placeCollection.find(query).toArray();
   console.log(result)
   res.send(result)
   })
 
-
-
-
+  app.delete('/place/:id', async (req, res) =>{
+    const {id} = req.params
+    const query = {_id: new ObjectId(id)}
+    const result = await placeCollection.deleteOne(query);
+    res.send(result) 
+   })
 
 app.post('/place', async(req, res) => {
   const newPlace = req.body;
