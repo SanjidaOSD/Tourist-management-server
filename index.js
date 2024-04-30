@@ -27,17 +27,32 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
 const placeCollection = client.db('placeDB').collection('place');
+const listCollection = client.db('listDB').collection('myAddList');
 
+app.get('/myAddList/:email', async(req, res) => {
+  console.log(req.params.email)
+  const result = await listCollection.find({email:req.params.email}).toArray;
+  res.send(result)
+})
 
 app.get('/place',async(req, res) => {
   const cursor = placeCollection.find();
   const result = await cursor.toArray();
   res.send(result);
 })
+
+
+
+app.post('/myAddList', async(req, res) => {
+  console.log(req.body)
+  const result = await listCollection.insertOne(newPlace);
+  res.send(result)
+})
+
+
 
 app.post('/place', async(req, res) => {
   const newPlace = req.body;
