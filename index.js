@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
@@ -44,7 +44,12 @@ app.get('/place',async(req, res) => {
   res.send(result);
 })
 
-
+app.get('/place/:_id', async(req , res) =>{
+const id = req.params.id
+const query = {_id: new ObjectId(id)}
+const result = await placeCollection.findOne(query).toArray();
+res.send(result)
+})
 
 app.post('/myAddList', async(req, res) => {
   console.log(req.body)
