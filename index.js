@@ -32,11 +32,6 @@ async function run() {
 const placeCollection = client.db('placeDB').collection('place');
 const listCollection = client.db('listDB').collection('myAddList');
 
-app.get('/myAddList/:email', async(req, res) => {
-  console.log(req.params.email)
-  const result = await listCollection.find({email:req.params.email}).toArray;
-  res.send(result)
-})
 
 app.get('/place',async(req, res) => {
   const cursor = placeCollection.find();
@@ -44,18 +39,23 @@ app.get('/place',async(req, res) => {
   res.send(result);
 })
 
-app.get('/place/:_id', async(req , res) =>{
-const id = req.params.id
+app.get('/place/:id', async(req , res) =>{
+const {id} = req.params
 const query = {_id: new ObjectId(id)}
-const result = await placeCollection.findOne(query).toArray();
+const result = await placeCollection.findOne(query);
+console.log(result)
 res.send(result)
 })
 
-app.post('/myAddList', async(req, res) => {
-  console.log(req.body)
-  const result = await listCollection.insertOne(newPlace);
+app.get('/myList/:email', async(req , res) =>{
+  const {email} = req.params
+  const query = {email: new ObjectId(email)}
+  const result = await placeCollection.find(query).toArray();
+  console.log(result)
   res.send(result)
-})
+  })
+
+
 
 
 
